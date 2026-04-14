@@ -1,0 +1,2 @@
+index,title,category,description,quiz,solution,added
+001,Two Sum,algorithm,Given an array of integers and a target find two numbers that add up to the target,quiz/001.qmd,solution/001.qmd,2026-04-14

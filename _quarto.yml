@@ -1,0 +1,42 @@
+project:
+  type: website
+
+website:
+  title: "Kata"
+  description: "A personal problem archive — one problem at a time."
+
+  sidebar:
+    style: "docked"
+    search: true
+    tools:
+      - icon: github
+        href: https://github.com/evanbio/kata
+        aria-label: GitHub
+    contents:
+      - index.qmd
+      - section: "Quiz"
+        contents:
+          - quiz/001.qmd
+      - section: "Solution"
+        contents:
+          - solution/001.qmd
+
+  page-footer:
+    left: "© 2026 Yibin Zhou"
+    right: "Licensed under [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/)"
+
+format:
+  html:
+    theme:
+      light: flatly
+      dark: darkly
+    css: styles.css
+    fontsize: 20px
+    mainfont: "Source Serif 4"
+    monofont: "JetBrains Mono"
+    toc: true
+    toc-depth: 3
+    toc-location: right
+    toc-title: "On this page"
+    code-copy: true
+    code-overflow: wrap

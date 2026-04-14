@@ -1,0 +1,75 @@
+---
+title: "001 · Two Sum"
+date: 2026-04-14
+categories: [algorithm]
+tags: [hash-map, array]
+source: LeetCode
+difficulty: Easy
+---
+
+## My First Thoughts
+
+最先想到的是暴力枚举所有二元组合，也就是逐对检查是否等于 target，但复杂度显然太高。
+接着想到与其直接枚举两数之和，不如固定一个数，去找 target - x 是否存在。
+这已经接近正解了，真正的问题变成：如何把“找这个差值”做快。
+
+```python
+def two_sum(nums: list[int], target: int) -> list[int]:
+    n = len(nums)
+    for i in range(n):
+        for j in range(i + 1, n):
+            if nums[i] + nums[j] == target:
+                return [i, j]
+```
+---
+
+## Why That Is Not Enough
+
+如果对每个元素都在线性查找它的 complement，总体仍然是两层复杂度。
+排序虽然可以帮助查找，但会破坏原始下标，而题目要求返回 indices，因此不如直接在原数组上处理。
+
+---
+
+## Final Idea
+
+用 hash map 记录已经出现过的数字及其下标。
+遍历当前元素时，先计算 `complement = target - num`，如果它已经在 map 中，就直接返回答案；否则把当前值加入 map。
+
+---
+
+### Why It Works
+
+遍历到第 $i$ 个元素时，`seen` 中存储的是它之前所有元素及其 index。若 `complement` 已在 `seen` 中，说明之前某个元素与当前元素之和恰好等于 `target`，直接返回两个 index。一次遍历，每个元素只处理一次。
+
+---
+
+### Code
+
+```python
+def two_sum(nums: list[int], target: int) -> list[int]:
+    seen = {}
+    for i, num in enumerate(nums):
+        complement = target - num
+        if complement in seen:
+            return [seen[complement], i]
+        seen[num] = i
+```
+
+---
+
+### Complexity
+
+| | |
+|---|---|
+| Time | $O(n)$ — 单次遍历 |
+| Space | $O(n)$ — hash map 最多存 $n$ 个元素 |
+
+---
+
+## Takeaway
+
+当题目要求“找一对满足某条件的元素”时，可以优先把问题改写成“遍历当前元素，并快速查询它需要的 complement 是否已经出现”。
+
+---
+
+← [Quiz](../quiz/001.qmd)
