@@ -17,8 +17,8 @@ df = pd.read_csv("registry.csv")
 df["title"] = '<a href="' + df["quiz"] + '">' + df["title"] + "</a>"
 df["solution"] = '<a href="' + df["solution"] + '">solution</a>'
 df = df[["index", "title", "category", "description", "solution", "added"]]
-df.columns = ["#", "Title", "Category", "Description", "Crack", "Added"]
+df.columns = ["#", "Title", "Category", "Description", "Solution", "Added"]
 HTML(df.to_html(escape=False, index=False))
 ```
 
-Not every problem has an obvious answer — and that's the point. Each one is a small mystery waiting to be solutioned, one clue at a time. The archive grows slowly, but so does the intuition behind it. No rush. Sherlock didn't solve cases in a day either.
+Not every problem has an obvious answer — and that's the point. Each one is a small mystery waiting to be solved, one clue at a time. The archive grows slowly, but so does the intuition behind it. No rush. Sherlock didn't solve cases in a day either.

@@ -17,9 +17,11 @@ website:
       - section: "Quiz"
         contents:
           - quiz/001.qmd
+          - quiz/002.qmd
       - section: "Solution"
         contents:
           - solution/001.qmd
+          - solution/002.qmd
 
   page-footer:
     left: "© 2026 Yibin Zhou"

@@ -1,0 +1,49 @@
+---
+title: "002 · Best Time to Buy and Sell Stock"
+date: 2026-04-16
+categories: [algorithm]
+tags: [array, dynamic-programming, single-pass]
+source: LeetCode
+difficulty: Easy
+---
+
+## Problem
+
+给定一个数组 `prices`，其中 `prices[i]` 表示某支股票第 `i` 天的价格。
+
+你只能选择 **某一天买入一次**，并在 **之后的某一天卖出一次**。
+
+返回你能获得的最大利润。如果无法获得任何利润，返回 `0`。
+
+## Examples
+
+**示例 1**
+
+```
+Input:  prices = [7, 1, 5, 3, 6, 4]
+Output: 5
+```
+
+解释：在第 2 天买入，价格为 `1`；在第 5 天卖出，价格为 `6`。最大利润为 `6 - 1 = 5`。
+
+**示例 2**
+
+```
+Input:  prices = [7, 6, 4, 3, 1]
+Output: 0
+```
+
+解释：价格一直下降，没有可以获利的交易，因此返回 `0`。
+
+## Constraints
+
+- $1 \leq$ `prices.length` $\leq 10^5$
+- $0 \leq$ `prices[i]` $\leq 10^4$
+
+## Link
+
+- [Original Problem](https://leetcode.com/problems/best-time-to-buy-and-sell-stock/)
+
+---
+
+→ [Solution](../solution/002.qmd)
