@@ -2,3 +2,4 @@ index,title,category,description,quiz,solution,added
 001,Two Sum,algorithm,Given an array of integers and a target find two numbers that add up to the target,quiz/001.qmd,solution/001.qmd,2026-04-14
 002,Best Time to Buy and Sell Stock,algorithm,Given daily stock prices find the maximum profit from one buy and one sell,quiz/002.qmd,solution/002.qmd,2026-04-16
 003,Binary Search,algorithm,Given a sorted array and a target find the target index or return -1,quiz/003.qmd,solution/003.qmd,2026-04-17
+004,Valid Anagram,algorithm,Given two strings determine whether they contain the same characters with the same counts,quiz/004.qmd,solution/004.qmd,2026-04-20
