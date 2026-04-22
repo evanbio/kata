@@ -4,3 +4,4 @@ index,title,category,description,quiz,solution,added
 003,Binary Search,algorithm,Given a sorted array and a target find the target index or return -1,quiz/003.qmd,solution/003.qmd,2026-04-17
 004,Valid Anagram,algorithm,Given two strings determine whether they contain the same characters with the same counts,quiz/004.qmd,solution/004.qmd,2026-04-20
 005,Valid Parentheses,algorithm,Given a string of brackets determine whether every bracket is closed in the correct order,quiz/005.qmd,solution/005.qmd,2026-04-21
+006,Merge Two Sorted Lists,algorithm,Given two sorted linked lists merge them into one sorted linked list,quiz/006.qmd,solution/006.qmd,2026-04-22
