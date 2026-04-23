@@ -1,0 +1,136 @@
+---
+title: "007 · Contains Duplicate"
+date: 2026-04-23
+categories: [algorithm]
+tags: [array, hash-table]
+source: LeetCode
+difficulty: Easy
+---
+
+## My First Thoughts
+
+这个思路和 `Two Sum` 有点像。`Two Sum` 里我们一边遍历，一边记录已经见过的数字，用来判断当前数字能不能和以前的某个数字配对。
+
+这道题更直接：不需要配对，也不需要算差值，只需要判断当前数字以前有没有出现过。
+
+所以第一反应可以是维护一个 `seen`：
+
+```python
+seen = []
+
+for val in nums:
+    if val in seen:
+        return True
+    else:
+        seen.append(val)
+
+return False
+```
+
+这段逻辑是对的：
+
+- 如果 `val` 已经在 `seen` 里面，说明它至少第二次出现，直接返回 `True`。
+- 如果 `val` 不在 `seen` 里面，就把它放进去，表示以后再看到它就算重复。
+- 如果一路走完整个 `nums` 都没有提前返回，说明没有重复数字，返回 `False`。
+
+这里不需要最后再判断 `seen == nums`。因为循环已经把每个数字都检查过了，只要没有发现重复，就可以直接确定答案是 `False`。
+
+---
+
+## Why That Is Not Enough
+
+用 list 维护 `seen` 可以做出来，但它不是最优解。
+
+问题出在这一句：
+
+```python
+if val in seen:
+```
+
+如果 `seen` 是 list，Python 需要从前往后一个个找，才能知道 `val` 在不在里面。
+
+比如：
+
+```text
+seen = [1, 2, 3, 4, 5]
+```
+
+要判断 `6 in seen`，它必须看过 `1, 2, 3, 4, 5` 之后，才能确定没有 `6`。
+
+所以 list 里的 `in` 最坏情况下是 $O(n)$。
+
+如果数组本身有 $n$ 个数字，我们又在每次循环里都做一次 list 查找，最坏时间就会接近：
+
+```text
+1 + 2 + 3 + ... + n
+```
+
+也就是 $O(n^2)$。
+
+这道题真正需要的不是“按顺序保存看过的数字”，而是“快速判断一个数字以前有没有出现过”。
+
+这种需求更适合用 `set`。
+
+---
+
+## Final Idea
+
+用一个 `set` 保存已经见过的数字。
+
+从左到右遍历 `nums`：
+
+1. 如果当前数字已经在 `seen` 里，说明有重复，返回 `True`。
+2. 如果当前数字还没出现过，就把它加入 `seen`。
+3. 如果遍历结束还没发现重复，返回 `False`。
+
+`set` 和 list 最大的区别是：这里我们不关心数字出现的顺序，只关心“有没有出现过”。
+
+所以 `set` 更贴近这个问题。
+
+---
+
+### Why It Works
+
+遍历到某个数字 `val` 时，`seen` 里保存的是它前面所有已经出现过的数字。
+
+如果 `val in seen`，说明当前数字和前面的某个数字相同，所以数组里一定存在重复元素。
+
+如果 `val not in seen`，说明这是第一次看到它。把它加入 `seen` 后，后面如果再遇到同样的数字，就能检查出来。
+
+如果整个数组遍历完都没有触发重复检查，说明每个数字都只出现了一次。
+
+---
+
+### Code
+
+```python
+def contains_duplicate(nums: list[int]) -> bool:
+    seen = set()
+
+    for val in nums:
+        if val in seen:
+            return True
+
+        seen.add(val)
+
+    return False
+```
+
+---
+
+### Complexity
+
+| | |
+|---|---|
+| Time | $O(n)$ — 每个数字遍历一次，`set` 查找和加入平均是 $O(1)$ |
+| Space | $O(n)$ — 最坏情况下所有数字都不重复，需要都放进 `seen` |
+
+---
+
+## Takeaway
+
+> 当题目只关心“一个东西以前有没有出现过”时，优先想到 `set`。list 也能记录看过的内容，但查找会慢；set 不保留顺序，但能更快回答“在不在里面”这个问题。
+
+---
+
+← [Quiz](../quiz/007.qmd)
