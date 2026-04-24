@@ -1,0 +1,164 @@
+---
+title: "008 · Valid Palindrome"
+date: 2026-04-24
+categories: [algorithm]
+tags: [two-pointers, string]
+source: LeetCode
+difficulty: Easy
+---
+
+## My First Thoughts
+
+看到题目，先想到这是一道判断回文结构的题。
+
+最基础的解法，就是先循环一遍字符串，弄一个 `keep` 出来：
+
+- 如果当前字符在 `a-z`，就加入
+- 如果当前字符在 `A-Z`，就转成小写后加入
+- 如果是其他字符，就直接移除
+
+这样最后会得到一个处理干净的字符串 `keep`。
+
+然后再判断它是不是回文结构。做法也很直接：
+
+- 第一个字符和最后一个字符比
+- 第二个字符和倒数第二个字符比
+- 一直循环到中点
+
+这是最直接的解法。
+
+更进一步，又想到前面刚学过二分查找，因此在思考可不可以直接在原来的 `char` 上做，不必先处理成 `keep`？
+
+于是就会想到维护一个 `left` 和一个 `right` 指针：
+
+```python
+left = 0
+right = len(s) - 1
+```
+
+然后从两边往中间走。
+
+这里用 `while` 会比较自然，因为左右指针不是每一轮都固定同时移动一步。
+
+- 如果左边不是有效字符，就先跳过左边
+- 如果右边不是有效字符，就先跳过右边
+- 如果两边都是有效字符，再比较它们
+
+```python
+left = 0
+right = len(s) - 1
+
+while left < right:
+    front = s[left]
+    end = s[right]
+
+    if front.isalnum() and end.isalnum():
+        if front.lower() == end.lower():
+            left += 1
+            right -= 1
+        else:
+            return False
+    elif front.isalnum():
+        right -= 1
+    elif end.isalnum():
+        left += 1
+    else:
+        left += 1
+        right -= 1
+
+return True
+```
+
+---
+
+## Why That Is Not Enough
+
+先构造 `keep` 的做法当然能做出来，但它有一个明显的问题：额外多造了一个新字符串。
+
+题目只是要求“忽略非字母数字字符、忽略大小写”，并没有要求真的把处理后的字符串完整存下来。
+
+如果字符串很长，这一步虽然不会错，但会多花一份 $O(n)$ 的空间。
+
+再看双指针这个方向，已经很接近答案了，需要解决几个关键细节：
+
+- 有效字符判断如何写？
+- 左右是并列判断还是包含？
+- 提前退出的条件？
+- 结束循环条件？
+
+---
+
+## Final Idea
+
+直接在原字符串 `s` 上用双指针处理，不再额外构造 `keep`。
+
+维护两个指针：
+
+- `left` 指向开头
+- `right` 指向结尾
+
+循环时分三种情况：
+
+1. 如果 `s[left]` 不是字母或数字，就跳过它，`left += 1`
+2. 如果 `s[right]` 不是字母或数字，就跳过它，`right -= 1`
+3. 如果两边都是有效字符，就把它们统一转成小写后比较
+
+如果不同，直接返回 `False`。
+
+如果相同，就让两个指针一起向中间走。
+
+最后如果整个过程都没有发现不相等，就返回 `True`。
+
+---
+
+### Why It Works
+
+双指针的核心就在于：每一轮都只比较当前最左边和最右边、真正应该参与判断的字符。
+
+左边遇到无效字符，就跳过；右边遇到无效字符，也跳过。这样最后真正被比较的，其实就是“清洗之后字符串”的两端字符。
+
+如果某一轮这两个字符不一样，那么它一定不是回文。
+
+如果从外到内每一轮都一样，直到两个指针相遇或交错，那它就是回文。
+
+---
+
+### Code
+
+```python
+def is_palindrome(s: str) -> bool:
+    left = 0
+    right = len(s) - 1
+
+    while left < right:
+        if not s[left].isalnum():
+            left += 1
+        elif not s[right].isalnum():
+            right -= 1
+        elif s[left].lower() != s[right].lower():
+            return False
+        else:
+            left += 1
+            right -= 1
+
+    return True
+```
+
+---
+
+### Complexity
+
+| | |
+|---|---|
+| Time | $O(n)$ — 每个字符最多被左右指针各看一次 |
+| Space | $O(1)$ — 不再额外构造 `keep` |
+
+---
+
+## Takeaway
+
+> 这题很适合记住一个点：如果题目要求“跳过某些字符再判断”，很多时候不必真的先把新字符串造出来。可以直接在原字符串上用双指针一边跳过、一边比较，把处理和判断合在一起做。
+
+---
+
+← [Quiz](../quiz/008.qmd)
