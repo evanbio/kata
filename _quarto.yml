@@ -27,6 +27,7 @@ website:
           - quiz/006.qmd
           - quiz/007.qmd
           - quiz/008.qmd
+          - quiz/009.qmd
       - section: "Solution"
         contents:
           - solution/001.qmd
@@ -37,6 +38,7 @@ website:
           - solution/006.qmd
           - solution/007.qmd
           - solution/008.qmd
+          - solution/009.qmd
 
   page-footer:
     left: "© 2026 Yibin Zhou"
