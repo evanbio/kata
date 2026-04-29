@@ -9,3 +9,4 @@ index,title,category,description,quiz,solution,added
 008,Valid Palindrome,algorithm,Given a string determine whether it reads the same forward and backward after removing non-alphanumeric characters and ignoring case,quiz/008.qmd,solution/008.qmd,2026-04-24
 009,Maximum Subarray,algorithm,Given an integer array find the contiguous subarray with the largest sum and return that sum,quiz/009.qmd,solution/009.qmd,2026-04-27
 010,Move Zeroes,algorithm,Given an integer array move all zeroes to the end while keeping the relative order of non-zero elements,quiz/010.qmd,solution/010.qmd,2026-04-28
+011,Climbing Stairs,algorithm,Given a staircase with n steps count how many distinct ways you can climb it when each move is 1 or 2 steps,quiz/011.qmd,solution/011.qmd,2026-04-29
