@@ -1,0 +1,66 @@
+---
+title: "012 · First Bad Version"
+date: 2026-05-05
+categories: [algorithm]
+tags: [binary-search, interactive]
+source: LeetCode
+difficulty: Easy
+---
+
+## Problem
+
+你是一个产品经理，正在管理一个产品的多个版本。
+
+版本号从 `1` 到 `n`。某个版本开始出现问题，从这个版本之后的所有版本也都会是坏版本。
+
+你可以调用一个已经提供好的 API：
+
+```python
+isBadVersion(version) -> bool
+```
+
+这个 API 会告诉你某个版本 `version` 是否是坏版本。
+
+请你找出第一个坏版本。
+
+你应该尽量减少调用 `isBadVersion` 的次数。
+
+## Examples
+
+**示例 1**
+
+```
+Input:  n = 5, bad = 4
+Output: 4
+```
+
+解释：
+
+```
+isBadVersion(3) -> false
+isBadVersion(5) -> true
+isBadVersion(4) -> true
+```
+
+所以第一个坏版本是 `4`。
+
+**示例 2**
+
+```
+Input:  n = 1, bad = 1
+Output: 1
+```
+
+解释：只有一个版本，并且它就是坏版本。
+
+## Constraints
+
+- $1 \leq$ `bad` $\leq$ `n` $\leq 2^{31} - 1$
+
+## Link
+
+- [Original Problem](https://leetcode.com/problems/first-bad-version/)
+
+---
+
+→ [Solution](../solution/012.qmd)

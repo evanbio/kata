@@ -1,0 +1,204 @@
+---
+title: "012 · First Bad Version"
+date: 2026-05-05
+categories: [algorithm]
+tags: [binary-search, interactive]
+source: LeetCode
+difficulty: Easy
+---
+
+## My First Thoughts
+
+第一眼看这道题，很自然会想到：这本质上也是一个二分查找问题。
+
+我们只知道最新版本号是 `n`，版本范围是：
+
+```text
+1, 2, 3, ..., n
+```
+
+而且题目说，只要某个版本开始坏了，后面的所有版本也都会坏。
+
+所以整个版本序列会长这样：
+
+```text
+good, good, good, bad, bad, bad
+```
+
+也就是：
+
+```text
+false, false, false, true, true, true
+```
+
+我们要找的不是某个具体的值，而是第一个让 `isBadVersion(version)` 返回 `true` 的位置。
+
+一个直接的二分想法可能是：
+
+```python
+left = 1
+right = n
+
+while left < right:
+    mid = (left + right) // 2
+
+    if isBadVersion(mid):
+        right = mid
+    else:
+        left = mid
+```
+
+这个方向是对的，但这里有一个很容易忽略的问题：`left = mid` 可能让循环卡住。
+
+---
+
+## Why That Is Not Enough
+
+问题出在区间只剩两个元素的时候。
+
+比如：
+
+```text
+n = 2
+bad = 2
+```
+
+也就是：
+
+```text
+version:       1      2
+isBadVersion: false  true
+```
+
+如果现在：
+
+```python
+left = 1
+right = 2
+mid = (left + right) // 2
+```
+
+那么：
+
+```python
+mid = 1
+```
+
+调用 API：
+
+```python
+isBadVersion(1) -> false
+```
+
+这说明版本 `1` 不是坏版本。答案一定在它右边。
+
+如果这时写：
+
+```python
+left = mid
+```
+
+那么 `left` 还是 `1`，`right` 还是 `2`。搜索范围完全没有变化。
+
+下一轮依然会得到：
+
+```python
+mid = 1
+```
+
+然后又回到同样的状态。
+
+所以循环不会走到 `left == right`，而是一直停在 `[1, 2]` 这个区间里。
+
+关键是：当 `isBadVersion(mid)` 是 `false` 时，`mid` 这个版本已经可以被排除了。第一个坏版本不可能是 `mid`，只能在 `mid` 后面。
+
+---
+
+## Final Idea
+
+维护一个闭区间 `[left, right]`，表示第一个坏版本一定在这个范围里。
+
+初始时：
+
+```python
+left = 1
+right = n
+```
+
+每次取中点：
+
+```python
+mid = (left + right) // 2
+```
+
+然后分两种情况：
+
+1. 如果 `isBadVersion(mid)` 是 `true`，说明 `mid` 可能就是第一个坏版本，也可能第一个坏版本还在它左边，所以保留 `mid`：
+
+```python
+right = mid
+```
+
+2. 如果 `isBadVersion(mid)` 是 `false`，说明 `mid` 以及它左边的版本都不可能是答案，所以排除 `mid`：
+
+```python
+left = mid + 1
+```
+
+当 `left == right` 时，区间里只剩一个候选版本。它就是第一个坏版本。
+
+---
+
+### Why It Works
+
+这道题能用二分，是因为 `isBadVersion(version)` 的结果具有单调性。
+
+在第一个坏版本之前，结果都是 `false`；从第一个坏版本开始，结果都是 `true`。
+
+所以每次检查 `mid` 时：
+
+- 如果 `mid` 是坏版本，答案可能是 `mid`，不能把它排除，只能收缩右边界到 `mid`
+- 如果 `mid` 不是坏版本，答案一定在 `mid` 右边，可以把左边界移到 `mid + 1`
+
+这样每一轮都会缩小搜索范围，并且不会丢掉真正的答案。
+
+最后 `left` 和 `right` 相遇时，剩下的唯一位置就是第一个坏版本。
+
+---
+
+### Code
+
+```python
+def first_bad_version(n: int) -> int:
+    left = 1
+    right = n
+
+    while left < right:
+        mid = (left + right) // 2
+
+        if isBadVersion(mid):
+            right = mid
+        else:
+            left = mid + 1
+
+    return left
+```
+
+---
+
+### Complexity
+
+| | |
+|---|---|
+| Time | $O(\log n)$ — 每次排除一半版本范围 |
+| Space | $O(1)$ — 只维护左右边界和中点 |
+
+---
+
+## Takeaway
+
+> 这类题不是在找一个具体值，而是在找第一个满足条件的位置。二分时要特别注意边界是否真的在移动：如果 `mid` 已经确定不是答案，就要用 `mid + 1` 把它排除；如果 `mid` 仍然可能是答案，就只能保留它。
+
+---
+
+← [Quiz](../quiz/012.qmd)
