@@ -11,3 +11,4 @@ index,title,category,description,quiz,solution,added
 010,Move Zeroes,algorithm,Given an integer array move all zeroes to the end while keeping the relative order of non-zero elements,quiz/010.qmd,solution/010.qmd,2026-04-28
 011,Climbing Stairs,algorithm,Given a staircase with n steps count how many distinct ways you can climb it when each move is 1 or 2 steps,quiz/011.qmd,solution/011.qmd,2026-04-29
 012,First Bad Version,algorithm,Given n product versions and an API that identifies bad versions find the first bad version,quiz/012.qmd,solution/012.qmd,2026-05-05
+013,Roman to Integer,algorithm,Given a roman numeral convert it to an integer,quiz/013.qmd,solution/013.qmd,2026-05-06
