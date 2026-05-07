@@ -1,0 +1,223 @@
+---
+title: "014 · Reverse Linked List"
+date: 2026-05-07
+categories: [algorithm]
+tags: [linked-list, recursion]
+source: LeetCode
+difficulty: Easy
+---
+
+## My First Thoughts
+
+这道题一开始让我不舒服的地方，其实不是“反转”这件事，还是链表本身的概念。
+
+题目说每个节点有两个部分：
+
+- `val`
+- `next`
+
+我最开始的理解是：`val` 应该是取出当前值，`next` 应该是返回下一个节点。
+
+但一到代码里，就会开始混乱：
+
+```python
+list.val
+list.next
+list = list.next
+```
+
+这些到底分别是什么意思？
+
+尤其是 `head` 这个词也很陌生。题目里展示成：
+
+```text
+1 -> 2 -> 3 -> 4 -> 5 -> None
+```
+
+那 `head` 是不是就是 `1`？`list.val` 返回的是不是 `head`？如果要反转，原来的第一个节点是不是应该变成结果链表的最后一个？
+
+按这个想法往下想，会感觉应该有一个新的结果链表，比如叫 `rev`。
+
+原链表第一个节点是 `1`，反转后它应该在最后：
+
+```text
+1 -> None
+```
+
+然后原链表第二个节点是 `2`，反转后它应该接在 `1` 前面：
+
+```text
+2 -> 1 -> None
+```
+
+再处理第三个节点：
+
+```text
+3 -> 2 -> 1 -> None
+```
+
+这样看起来，好像每次都要把当前节点放到 `rev` 的最前面。
+
+可是具体怎么写就卡住了：
+
+```python
+list = list.next
+```
+
+这句到底是“走到下一个节点”，还是只是拿到了下一个节点但没有移动？
+
+如果只是写：
+
+```python
+list.next
+```
+
+变量本身会不会变？
+
+这里真正需要先分清的是：
+
+- `head` 不是节点的值，而是指向第一个节点的变量
+- `list.val` 拿到的是当前节点里的值
+- `list.next` 拿到的是当前节点指向的下一个节点
+- `list = list.next` 才是让 `list` 这个变量往后移动
+
+理解到这里以后，虽然完整实现还不清楚，但能感觉到这题应该不是单纯“倒着记录值”。
+
+真正要维护的是局部关系：当前节点反转后，应该指向它前面的那个节点。
+
+---
+
+## Why That Is Not Enough
+
+最容易出错的地方是：如果直接改 `current.next`，就会丢掉后面的链表。
+
+比如当前在节点 `1`：
+
+```text
+current
+  |
+  v
+1 -> 2 -> 3 -> 4 -> 5 -> None
+```
+
+如果马上写：
+
+```python
+current.next = prev
+```
+
+因为一开始 `prev` 是 `None`，链表会变成：
+
+```text
+1 -> None
+```
+
+问题是，节点 `2` 以及后面的部分原本只能通过 `1.next` 找到。现在 `1.next` 被改掉了，如果没有提前保存 `2`，后面的链表就断开了。
+
+所以每一步不能只做“反转当前指针”，还要先保存原来的下一个节点。
+
+这就是为什么反转链表通常会出现三个指针：
+
+- `prev`：当前节点反转后应该指向谁
+- `current`：正在处理的节点
+- `next_node`：提前保存的下一个节点，避免链表断掉
+
+---
+
+## Final Idea
+
+从头节点开始遍历链表。
+
+每次处理一个 `current` 节点时，按下面顺序做：
+
+1. 先保存下一个节点：`next_node = current.next`
+2. 把当前节点指向前一个节点：`current.next = prev`
+3. 让 `prev` 往前推进到当前节点：`prev = current`
+4. 让 `current` 继续走到原来的下一个节点：`current = next_node`
+
+以 `1 -> 2 -> 3` 为例。
+
+一开始：
+
+```text
+prev = None
+current = 1
+```
+
+处理节点 `1` 后：
+
+```text
+1 -> None
+prev = 1
+current = 2
+```
+
+处理节点 `2` 后：
+
+```text
+2 -> 1 -> None
+prev = 2
+current = 3
+```
+
+处理节点 `3` 后：
+
+```text
+3 -> 2 -> 1 -> None
+prev = 3
+current = None
+```
+
+当 `current` 变成 `None`，说明原链表已经走完了。此时 `prev` 指向的就是新链表的头节点。
+
+---
+
+### Why It Works
+
+在遍历过程中，可以把链表分成两部分：
+
+- `prev` 指向的部分：已经反转好了
+- `current` 指向的部分：还没有处理
+
+每一轮循环都会把 `current` 这个节点从“未处理部分”拿出来，接到“已反转部分”的最前面。
+
+因为 `next_node` 提前保存了原来的下一个节点，所以即使修改了 `current.next`，也不会丢掉还没处理的链表。
+
+当所有节点都处理完后，未处理部分为空，已反转部分就是完整答案。此时 `prev` 正好指向反转后的头节点。
+
+---
+
+### Code
+
+```python
+def reverse_list(head):
+    prev = None
+    current = head
+
+    while current:
+        next_node = current.next
+        current.next = prev
+        prev = current
+        current = next_node
+
+    return prev
+```
+
+---
+
+### Complexity
+
+| | |
+|---|---|
+| Time | $O(n)$ — 每个节点只处理一次 |
+| Space | $O(1)$ — 只用了几个额外指针 |
+
+---
+
+## Takeaway
+
+> 链表反转的核心不是“倒序输出值”，而是“改变指针方向”。改 `current.next` 之前，一定要先保存原来的下一个节点，否则后半段链表会丢失。
+
+---
+
+← [Quiz](../quiz/014.qmd)
