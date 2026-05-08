@@ -1,0 +1,199 @@
+---
+title: "015 · Linked List Cycle"
+date: 2026-05-08
+categories: [algorithm]
+tags: [linked-list, two-pointers, hash-table]
+source: LeetCode
+difficulty: Easy
+---
+
+## My First Thoughts
+
+这道题一开始怪的地方，是题目说输入只有一个 `head`，但示例里又出现了 `pos`。
+
+后来要先分清楚：`pos` 不是函数参数。它只是 LeetCode 用来说明测试数据怎么构造环。
+
+真正传进函数的只有：
+
+```python
+head
+```
+
+也就是链表的头节点。
+
+比如：
+
+```text
+head = [3,2,0,-4], pos = 1
+```
+
+意思不是函数会收到 `pos = 1`，而是测试系统提前造出了这样的结构：
+
+```text
+3 -> 2 -> 0 -> -4
+     ^         |
+     |_________|
+```
+
+尾节点 `-4` 的 `next` 指回了下标为 `1` 的那个节点，也就是节点 `2`。
+
+所以沿着 `next` 走，会变成：
+
+```text
+3 -> 2 -> 0 -> -4 -> 2 -> 0 -> -4 -> 2 -> ...
+```
+
+这里真正重复的不是数字 `2`，而是同一个节点对象。
+
+最自然的想法是：那我就记录每一步走过的东西。
+
+一开始可能会写成记录值：
+
+```text
+3
+2
+0
+-4
+2
+```
+
+看到 `2` 重复，就想返回 `true`。
+
+但这马上有问题。
+
+如果链表是：
+
+```text
+3 -> 2 -> 0 -> -4 -> 2 -> None
+```
+
+这里也有两个 `2`，但它们只是值一样，不是同一个节点。链表最后可以走到 `None`，所以没有环。
+
+因此这道题不能记录 `current.val`。要记录的是 `current` 这个节点本身。
+
+---
+
+## Why That Is Not Enough
+
+如果只记录节点值：
+
+```python
+seen.add(current.val)
+```
+
+判断的是：
+
+```text
+这个数字以前出现过吗？
+```
+
+但链表是否有环，判断的不是值有没有重复，而是：
+
+```text
+我是不是又走回了同一个节点？
+```
+
+可以把节点理解成一个盒子。盒子里有两个东西：
+
+- `val`：盒子里写的值
+- `next`：指向下一个盒子的箭头
+
+两个不同盒子里都可以写着 `2`：
+
+```text
+A(val=2) -> B(val=2) -> None
+```
+
+这不是环，因为 `A` 和 `B` 是两个不同节点。
+
+而有环的情况是：
+
+```text
+A(val=2) -> C(val=0) -> D(val=-4)
+^                         |
+|_________________________|
+```
+
+这里不是又出现了一个新的 `A`，而是 `D.next` 直接指回原来的 `A`。
+
+所以集合里应该放节点对象：
+
+```python
+seen.add(current)
+```
+
+而不是节点值：
+
+```python
+seen.add(current.val)
+```
+
+Python 的 `set` 可以放对象。对象默认有自己的身份，所以两个值一样的节点，也仍然是两个不同对象。
+
+---
+
+## Final Idea
+
+从 `head` 开始，用 `current` 表示当前站在哪个节点上。
+
+再用一个集合 `seen` 记录已经走过的节点对象。
+
+每一轮做三件事：
+
+1. 如果 `current` 已经在 `seen` 里，说明又走回了之前的节点，返回 `True`
+2. 否则，把 `current` 这个节点对象加入 `seen`
+3. 让 `current = current.next`，继续往下走
+
+如果最后 `current` 变成了 `None`，说明链表正常结束，没有环，返回 `False`。
+
+---
+
+### Why It Works
+
+如果链表没有环，沿着 `next` 一直走，最终一定会走到 `None`。
+
+在这个过程中，每个节点最多只会被访问一次，所以不会触发重复节点判断。
+
+如果链表有环，进入环以后会不断绕圈。因为环里的节点数量有限，所以迟早会再次走到某个已经访问过的节点。
+
+这时 `current in seen` 为 `True`，就可以判断链表中存在环。
+
+关键点是：集合里记录的是节点对象本身，不是节点的值。
+
+---
+
+### Code
+
+```python
+def hasCycle(head):
+    seen = set()
+    current = head
+
+    while current:
+        if current in seen:
+            return True
+
+        seen.add(current)
+        current = current.next
+
+    return False
+```
+
+---
+
+### Complexity
+
+| | |
+|---|---|
+| Time | $O(n)$ — 每个节点最多访问一次 |
+| Space | $O(n)$ — 最多需要把所有节点放进集合 |
+
+---
+
+## Takeaway
+
+> 链表成环看的是“有没有回到同一个节点对象”，不是“有没有遇到相同的值”。`current` 是当前节点本身，`current.val` 才是节点里的值。
+
+---
+
+← [Quiz](../quiz/015.qmd)
